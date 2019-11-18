@@ -1,0 +1,49 @@
+{% extends "comptable/navbar.html.twig" %}
+{% block title %}
+    FicheFrais
+{% endblock %}
+{% block body %}
+   
+    <div class="contenu" style="width:80%; margin:auto ; margin-top: 2em; border-radius: 25px; background-color: lightsalmon"> 
+        <br/>
+        <div class="searchName" style="margin-top: 2em">
+            <center>
+            <form action="{{ path('VueValiderFrais') }}" method="post" >
+                <select name="Visiteur" onchange="this.form.submit()">
+                    <option value="null">--Selectionner un Visiteur--</option>
+                    {% for v in visiteurs %} 
+                        {% if idvisiteurChoise != null %}
+                            {% if v.id == idvisiteurChoise %}
+                                <option value={{ v.id }} selected>{{ v.nom }}</option>
+                            {% else %}
+                                <option value={{ v.id }}>{{ v.nom }}</option>
+                            {% endif %}
+                        {% else %}
+                        <option value={{ v.id }}>{{ v.nom }}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+                </form>
+                {% if l == true %}
+                    {% if mois != null %}
+                        {{ mois }}
+                    {% endif %}  
+                
+
+                    {% for p in lff %}
+                        <h4> {{ p.id }}</h4>
+
+                    {% endfor %}
+                
+                {% endif %}
+
+           
+            </center>
+        </div>
+        <br/>
+         <br/>
+    </div>    
+    
+    
+    
+{% endblock %}

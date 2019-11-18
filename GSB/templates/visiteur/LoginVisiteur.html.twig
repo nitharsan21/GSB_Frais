@@ -1,0 +1,112 @@
+{% extends "base.html.twig" %}
+{% block title %}
+Login Visiteur
+{% endblock %}
+{% block menu %}
+    <div style="margin-top: 15px">    
+        <center>
+            <style>
+                .imgnav {
+                    border-radius: 25%;
+                }
+                
+                
+                .imgnav:hover {
+                        -webkit-transform: scaleX(-1);
+                         transform: scaleX(-1);
+                        }
+                
+            </style>
+           
+            
+            <a  href="{{ path('CompteComptable') }}">
+                <img class="imgnav" src="{{ asset('img/logo.png') }}" width="350" >
+            </a>
+        </center>
+    </div>
+    <br/>
+    
+{% endblock %}
+
+
+{% block body %}
+    <style>
+        body{
+            background-image: url({{ asset('img/b12.jpg') }})
+        }
+        
+    </style>
+    
+{%  if essie == true %}
+    
+    <div class="alert alert-danger alert-dismissible fade show">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        <strong>Saissir incorrect!!!</strong>   Réessayer....
+    </div>
+{% else %}
+    
+{% endif %}
+<center>
+    <div class="well">
+    {{ form_start(form, {'attr': {'class': 'form-horizontal'}}) }}
+    {# Les erreurs générales du formulaire. #}
+    {{ form_errors(form) }}
+        <h3>
+            <center>Connexion Visiteur </center>
+        </h3>
+        <div class="well">
+            {{ form_start(form, {'attr': {'class': 'form-horizontal'}}) }}
+            {# Les erreurs générales du formulaire. #}
+            {{ form_errors(form) }}
+            <div class="form-group">
+                {# Génération du label. #}
+                {{ form_label(form.login, "Login :", {'label_attr': {'class': 'col-sm-3 control-label'}}) }}
+                {# Affichage des erreurs pour ce champ précis. #}
+                {{ form_errors(form.login) }}
+                <div class="col-sm-4">
+                    {# Génération de l'input. #}
+                    {{ form_widget(form.login, {'attr': {'class': 'form-control'}}) }}
+                </div>
+            </div>
+            <div class="form-group">
+                {# Génération du label. #}
+                {{ form_label(form.mdp, "Mot de passe :", {'label_attr': {'class': 'col-sm-3 control-label'}}) }}
+                {# Affichage des erreurs pour ce champ précis. #}
+                {{ form_errors(form.mdp) }}
+                <div class="col-sm-4">
+                    {# Génération de l'input. #}
+                    {{ form_widget(form.mdp, {'attr': {'class': 'form-control'}}) }}
+                </div>
+            </div>
+            <br/>
+            
+
+            {# Pour le bouton, pas de label ni d'erreur, on affiche juste le widget #}
+            <div class="row">
+                <div class="container">
+                    <label class="col-md-4 control-label"></label>
+                    <div class="col-md-4">
+                        {{ form_widget(form.valider, {'attr': {'class': 'btn btn-success btn-lg','style':'width:8em'}}) }}
+                        
+                        {{ form_widget(form.annuler, {'attr': {'class': 'btn btn-danger btn-lg', 'style':'width:8em'}}) }}
+                    </div>
+                    <p></p>
+                    <a type="button" class="btn btn-info btn-lg" href="{{ path('starting_page') }}" style="width:16em">Retour</a>
+                </div>
+            </div>
+        </div>
+        {% if app.session.flashBag.has('success') %}
+        <div class="alert alert-success">
+            {% for msg in app.session.flashBag.get('success') %}
+            {{ msg }}
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        {{ form_rest(form) }}
+        {# Fermeture de la balise <form> du formulaire HTML #}
+        {{ form_end(form) }}
+    </div>{# empty Twig template #}
+</center>
+{% endblock %}
+{# empty Twig template #}

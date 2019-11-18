@@ -1,0 +1,32 @@
+{% extends "base.html.twig" %}
+{% block title %}
+Liste des Catégories
+{% endblock %}
+{% block body %}
+<center>
+    <div class="well">
+        <h3>
+            <center>Listes des Categorie </center>
+        </h3>
+        <div class="well" style="width: 50%">
+            <table class="table">
+                <thead class="thead-dark">
+                <tr>
+                    <th scope="col">ID</th>
+                    <th scope="col">Libelle</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for categorie in categories %}
+                    <tr>
+                        <td>{{ categorie.id }}</td>
+                        <td>{{ categorie.nom }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>       
+        </div>
+
+    </div>
+</center>
+{% endblock %}

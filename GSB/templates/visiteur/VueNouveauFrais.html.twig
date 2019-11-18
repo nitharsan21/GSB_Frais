@@ -1,0 +1,36 @@
+{% extends "visiteur/navbar.html.twig" %}
+{% block title %}
+    Saisir Nouveau Frais
+{% endblock %}
+{% block body %}
+    <style>
+        input[type=text] {
+            border-radius:15%;
+            box-sizing: border-box;
+            text-align: center;
+        
+        }
+        
+    </style>    
+    <div class="contenu" style="width:80%; margin:auto ; margin-top: 2em; border-radius: 25px; background-color: lightblue"> 
+        <div class="periode" style="margin-top: 2em">
+            <h4 style="margin-left:2em">Gestion des Frais </h4>
+            <center>
+                <h4>Période d'engagement:</h4>
+                <label>Mois : </label>
+                <input type="text" name="Mois" value={{ my[0]}} readonly>
+                
+                <label style="margin-left: 5em">Année : </label>
+                <input type="text" name="annee" value={{ my[1]}} readonly>
+            </center>
+        </div>
+        
+        <form>
+        <div class="#" style="margin-top:2em">
+            
+            
+        </div>
+        </form>
+    </div>
+    
+{% endblock %}

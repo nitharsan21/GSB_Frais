@@ -1,0 +1,49 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Accueil{% endblock %}
+
+{% block menu %}
+    <div style="margin-top: 15px">    
+        <center>
+            <style>
+                .imgnav {
+                    border-radius: 25%;
+                }
+                
+                
+                .imgnav:hover {
+                        -webkit-transform: scaleX(-1);
+                         transform: scaleX(-1);
+                        }
+                
+            </style>
+           
+            
+            <a  href="{{ path('CompteComptable') }}">
+                <img class="imgnav" src="{{ asset('img/logo.png') }}" width="350" >
+            </a>
+        </center>
+    </div>
+    <br/>
+    
+{% endblock %}
+
+{% block body %}
+    <style>
+        body{
+            background-image: url({{ asset('img/b13.jpeg') }});
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }
+        
+    </style>
+    
+    
+    <center>
+        <h3> Bonjour </h3></br>
+        <a type="button" class="btn btn-primary btn-lg" href="{{ path('LoginComptable') }}" style="width:50em">Comptable</a>
+        </br><p></p>
+        <a type="button" class="btn btn-info btn-lg" href="{{ path('LoginVisiteur') }}" style="width:50em">Visiteur</a>
+    </center>   
+
+{% endblock %}
