@@ -57,7 +57,8 @@ class VisiteurController extends AbstractController
                     $session->set('user_id',$lesVisiteurs->getId());
                     $session->set('login',"Salut");
                     $_SESSION['login'] = true;
-                    $_SESSION['user_id'] = $lesVisiteurs->getId();
+                    $_SESSION['visiteur'] = $lesVisiteurs;
+                  
                     return $this->redirect('CompteVisiteur');
             }
             $summitt = true;
@@ -97,11 +98,13 @@ class VisiteurController extends AbstractController
      * @Route("/SaisirNouveauFrais" , name="SaisirNouveauFrais")
      */
     public function SaisirNouveauFrais(){
-        if(isset($_SESSION['login']) and isset($_SESSION['user_id'])){
+        if(isset($_SESSION['login']) and isset($_SESSION['visiteur'])){
             if($_SESSION['login'] == true){
                 
-                $idv = $_SESSION['user_id'];
+                $idv = $_SESSION['visiteur']->getId();
                 $mois = null;
+                $visiteur = $this->getDoctrine()->getRepository(Visiteur::class)->find($idv);
+                
                 if(date('j') > 15 ){
                     $mois = date("F", strtotime("+1 month", strtotime(date("F") . "1")) ); 
                 }
@@ -119,8 +122,8 @@ class VisiteurController extends AbstractController
                     foreach($fraisForfait as $i){
                         $entityManager = $this->getDoctrine()->getManager();
                         $LFF = new LigneFraisForfait();
-                        $LFF->setIdFraisForfait($i->getId());
-                        $LFF->setIdVisiteur($idv);
+                        $LFF->setIdFraisForfait($i);
+                        $LFF->setIdVisiteur($visiteur);
                         $LFF->setMois($mois);
                         $LFF->setQuantite(0);
                         
@@ -128,10 +131,16 @@ class VisiteurController extends AbstractController
                         $entityManager->persist($LFF);
                         // Exécution du INSERT INTO
                         $entityManager->flush();
-                    
+                        
+                        $LFF = null;
                     }
                         
                 }
+                
+                $ligneff = $this->getDoctrine()->getRepository(LigneFraisForfait::class)->getLFFwithIDVisiteurAndMonth($idv,$mois);
+                
+                
+                
 
                     
                 
@@ -141,7 +150,7 @@ class VisiteurController extends AbstractController
                 
                 
                 
-                return $this->render('visiteur/VueNouveauFrais.html.twig',['my' => $monthyear]);
+                return $this->render('visiteur/VueNouveauFrais.html.twig',['my' => $monthyear , 'ligneff' => $ligneff]);
             }
         }
         return $this->redirect('LoginVisiteur');

@@ -24,13 +24,47 @@
                 <input type="text" name="annee" value={{ my[1]}} readonly>
             </center>
         </div>
-        
+            <style>
+                
+                fieldset{
+                    border: 2px solid;
+                    max-width:500px;
+                    padding:16px;
+                    margin-bottom: 50em;
+                    margin-top:15em;
+                    background-color: lightcoral ;
+                    border-radius: 20px
+                }
+                
+            </style>
+            
+        <br/>
         <form>
-        <div class="#" style="margin-top:2em">
-            
-            
-        </div>
+            <fieldset style="margin: auto">
+                <legend stlye>Frais Forfait :</legend>
+                <center>
+                <div class="#" style="margin-top:2em">
+                    {% for l in ligneff %}
+                        {% if  l.IdFraisForfait.Id == 1 %}
+                            <label>Forfait Etape : </label>
+                        {% elseif l.IdFraisForfait.Id == 2 %}
+                            <label>Frais Kilométrique : </label>  
+                        {% elseif l.IdFraisForfait.Id == 3 %}
+                            <label>Nuitée Hôtel : </label>  
+                        {% elseif l.IdFraisForfait.Id == 4 %}
+                            <label>Repas Restaurant : </label>  
+                        {% endif %}
+                        <input style="float: right; margin-right:3em" type="number" name="Quantite" value={{ l.Quantite }} >
+                        <p></p>
+                    {% endfor %}
+                    <input class=" btn btn-success " style="width:8em;margin-right: 15px " type="submit" value="Valider">
+                    <input class=" btn btn-danger " style="width:8em;margin-left: 15px" type="reset" value="reset">
+                </div>
+                </center>
+            </fieldset>
         </form>
+        <br/>
+        <br/>
     </div>
     
 {% endblock %}
