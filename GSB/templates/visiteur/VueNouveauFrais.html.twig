@@ -4,7 +4,7 @@
 {% endblock %}
 {% block body %}
     <style>
-        input[type=text] {
+        .periode input[type=text] {
             border-radius:25%;
             box-sizing: border-box;
             text-align: center;
@@ -47,14 +47,85 @@
                     margin-top:1em;
                     background-color: lightcoral ;
                     border-radius: 20px;
-                    margin-left: 5%;
+                    margin-left: 5%; 
+                    float: left;
                     
-                     
                 }
+                
+                .fff2{
+                    border: 2px solid;
+                    
+                    padding:16px;
+                    margin-bottom: 1em;
+                    margin-top:1em;
+                    background-color: lightsalmon ;
+                    border-radius: 20px;
+                    margin-left: 2.5%;
+                    float: left;
+                    width: 40%;
+                   
+                }
+                
+                
+
+                  span.psw {
+                    float: right;
+                    padding-top: 16px;
+                  }
+
+                  /* The Modal (background) */
+                  .modal {
+                    
+                    z-index: 1; /* Sit on top */
+                    left: 0;
+                    top: 0;
+                    width: 100%; /* Full width */
+                    height: 100%; /* Full height */
+                    overflow: auto; /* Enable scroll if needed */
+                    background-color: rgb(0,0,0); /* Fallback color */
+                    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+                    padding-top: 60px;
+                    margin : auto;
+                    
+                  }
+                  .wall{
+                     
+                      background-color: lightblue;
+                      margin:auto;
+                  }
+
+                
+                  
+                 
+                
+                table {
+                        font-family: arial, sans-serif;
+                        border-collapse: collapse;
+                        width: 100%;
+                        background-color: white;
+                        
+                        
+                      }
+
+                      td, th {
+                        border: 1px solid #dddddd;
+                        text-align: left;
+                        padding: 8px;
+                        text-align: center;
+                      }
+
+                      tr:nth-child(even) {
+                        background-color: #dddddd;
+                      }
+
+                
+                
+                
                 
             </style>
             
         <br/>
+        <div>
         <form action="{{ path('ModifierLigneForfait') }}" method="POST">
             <fieldset class="fff1">
                 <legend stlye>Frais Forfait :</legend>
@@ -79,34 +150,159 @@
                 </center>
             </fieldset>
         </form>
-        <br/>
-        <br/>
         
-        <form action="{{ path('ModifierLigneForfait') }}" method="POST">
-            <fieldset class="">
-                <legend stlye>Frais Forfait :</legend>
+        </div>
+                    
+                    
+                    
+        <div>
+        <form action="#" method="POST">
+           <fieldset class="fff2">
+                <legend stlye>Frais Hors Forfait :</legend>
+        {% if LHFFexisite == true %}
+        
+                <center>
+                <div class="#" style="margin-top:2em;">
+                    <table>
+                        <thead>
+                        <th> Date </th>
+                        <th> Libelle </th>
+                        <th> Montant(€)</th>
+                        <th></th>
+                            
+                        </thead>
+                        <tbody>
+                            
+                            {% for lHff in ligneHFF %}
+                            
+                                <tr>
+                                    <td>{{ lHff.Id }}</td>
+                                    <td>{{ lHff.Libelle }}</td>
+                                    <td>{{ lHff.Montant }}</td>
+                                </tr>       
+                            {% endfor %}
+                           
+                        </tbody>
+                    </table>
+                </div>
+                            <br/>
+                <div>
+                    <button onclick="document.getElementById('id01').style.display='block'" class=" btn btn-warning" style="margin: auto" type="button">Ajouter Frais Hors Forfait</button>
+                </div>    
+                </center>
+           
+        {% else %}
+                
+           
                 <center>
                 <div class="#" style="margin-top:2em">
-                    {% for l in ligneff %}
-                        {% if  l.IdFraisForfait.Id == 1 %}
-                            <label>Forfait Etape : </label>
-                        {% elseif l.IdFraisForfait.Id == 2 %}
-                            <label>Frais Kilométrique : </label>  
-                        {% elseif l.IdFraisForfait.Id == 3 %}
-                            <label>Nuitée Hôtel : </label>  
-                        {% elseif l.IdFraisForfait.Id == 4 %}
-                            <label>Repas Restaurant : </label>  
-                        {% endif %}
-                        <input style="float: right; margin-right:3em" type="number" name="{{ l.IdFraisForfait.Id }}" value={{ l.Quantite }} >
-                        <p></p>
-                    {% endfor %}
-                    <input class=" btn btn-success " style="width:8em;margin-right: 15px " type="submit" value="Valider">
-                    <input class=" btn btn-danger " style="width:8em;margin-left: 15px" type="reset" value="reset">
+                    <button onclick="document.getElementById('id01').style.display='block'" style="width:auto;">Login</button>
+                    {% endif %}
+                    
+                    
+                    
+                    <div id="id01" class="modal">
+                        
+                        <center>
+                            
+                            <div class="well" style="margin-top:5em;border:2px solid black;width:40%;background-color: lightblue;border-radius: 20px">
+                                <span onclick="document.getElementById('id01').style.display='none'" class="close" style="margin-right: 5px " title="Close Modal">&times;</span>
+                            {{ form_start(form, {'attr': {'class': 'form-horizontal'}}) }}
+                            {# Les erreurs générales du formulaire. #}
+                            {{ form_errors(form) }}
+                                <h3>
+                                    <center>Ligne Hors Frais Forfait </center>
+                                </h3>
+                                <div class="well">
+                                    {{ form_start(form, {'attr': {'class': 'form-horizontal'}}) }}
+                                    {# Les erreurs générales du formulaire. #}
+                                    {{ form_errors(form) }}
+                                    <div class="form-group">
+                                        {# Génération du label. #}
+                                        {{ form_label(form.libelle, "Libelle :", {'label_attr': {'class': 'col-sm-4 control-label'}}) }}
+                                        {# Affichage des erreurs pour ce champ précis. #}
+                                        {{ form_errors(form.libelle) }}
+                                        <div class="col-sm-5">
+                                            {# Génération de l'input. #}
+                                            {{ form_widget(form.libelle, {'attr': {'class': 'form-control'}}) }}
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        {# Génération du label. #}
+                                        {{ form_label(form.date, "Date :", {'label_attr': {'class': 'col-sm-4 control-label'}}) }}
+                                        {# Affichage des erreurs pour ce champ précis. #}
+                                        {{ form_errors(form.date) }}
+                                        <div class="col-sm-5">
+                                            {# Génération de l'input. #}
+                                            {{ form_widget(form.date, {'attr': {'class': 'form-control'}}) }}
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        {# Génération du label. #}
+                                        {{ form_label(form.montant, "Montant :", {'label_attr': {'class': 'col-sm-4 control-label'}}) }}
+                                        {# Affichage des erreurs pour ce champ précis. #}
+                                        {{ form_errors(form.montant) }}
+                                        <div class="col-sm-5">
+                                            {# Génération de l'input. #}
+                                            {{ form_widget(form.montant, {'attr': {'class': 'form-control'}}) }}
+                                        </div>
+                                    </div>
+                                    <br/>
+
+
+                                    {# Pour le bouton, pas de label ni d'erreur, on affiche juste le widget #}
+                                    <div class="row">
+                                        <div class="container">
+                                            <label class="col-md-5 control-label"></label>
+                                            <div class="col-md-5">
+                                                {{ form_widget(form.valider, {'attr': {'class': 'btn btn-success btn-lg','style':'width:8em'}}) }}
+                                                <p></p>
+                                                <button type="button" style="width:8em;" onclick="document.getElementById('id01').style.display='none'" class="btn btn-danger btn-lg">Annuler</button>
+                                            <br/>
+                                            <br/>
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                </div>
+                                {% if app.session.flashBag.has('success') %}
+                                <div class="alert alert-success">
+                                    {% for msg in app.session.flashBag.get('success') %}
+                                    {{ msg }}
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+
+                                {{ form_rest(form) }}
+                                {# Fermeture de la balise <form> du formulaire HTML #}
+                                {{ form_end(form) }}
+                            </div>
+                        </center>
+                    </div>
                 </div>
                 </center>
-            </fieldset>
-        </form>
+           
+       
+        
+         </form>
+        </div>
     </div>
                     
     
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+// Get the modal
+var modal = document.getElementById('id01');
+
+// When the user clicks anywhere outside of the modal, close it
+window.onclick = function(event) {
+    if (event.target == modal) {
+        modal.style.display = "none";
+    }
+}
+</script>
+
 {% endblock %}

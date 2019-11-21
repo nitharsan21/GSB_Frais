@@ -19,7 +19,8 @@ use App\Entity\FicheFrais;
 use App\Repository\FicheFraisRepository;
 use App\Entity\Etat;
 use App\Repository\EtatRepository;
-
+use App\Entity\LigneFraisHorsForfait;
+use App\Form\LHFFType;
 
 class VisiteurController extends AbstractController
 {
@@ -100,7 +101,7 @@ class VisiteurController extends AbstractController
     /**
      * @Route("/SaisirNouveauFrais" , name="SaisirNouveauFrais")
      */
-    public function SaisirNouveauFrais(){
+    public function SaisirNouveauFrais(Request $query){
         if(isset($_SESSION['login']) and isset($_SESSION['visiteur'])){
             if($_SESSION['login'] == true){
                 
@@ -155,8 +156,34 @@ class VisiteurController extends AbstractController
                 
                 $ligneff = $this->getDoctrine()->getRepository(LigneFraisForfait::class)->getLFFwithIDVisiteurAndMonth($idv,$mois);
                 
+                $ligneHorsForFait = new LigneFraisHorsForfait();
+                $form = $this->createForm(LHFFType::class, $ligneHorsForFait); 
+                
+                $form->handleRequest($query);
+                if ($form->isSubmitted() && $form->isValid()) {
+                    $ligneHorsForFait->setMois($mois);
+                    $ligneHorsForFait->setIdVisiteur($visiteur);
+                    $entityManager = $this->getDoctrine()->getManager();
+                    $entityManager->persist($ligneHorsForFait);
+                    $entityManager->flush();
+                   
+                    $ficheF = $this->getDoctrine()->getRepository(FicheFrais::class)->ficheforfaitwithMonthandIdv($mois,$idv);
+                    $ficheF->setMontantValide($ficheF->getMontantValide() + $ligneHorsForFait->getMontant());
+                    $ficheF->setDateModif(new \DateTime());
+                    $entityManager->merge($ficheF);
+                    $entityManager->flush();
+                    
+                    
+                    return $this->redirect('SaisirNouveauFrais');        
+                }
                 
                 
+                $ligneHff = $this->getDoctrine()->getRepository(LigneFraisHorsForfait::class)->LHFFwithMonthandIdv($mois,$idv);
+                $LHFFexiste = false;
+                
+                if(sizeof($ligneHff)>0){
+                    $LHFFexiste = true;
+                }
 
                     
                 
@@ -166,7 +193,8 @@ class VisiteurController extends AbstractController
                 
                 
                 
-                return $this->render('visiteur/VueNouveauFrais.html.twig',['my' => $monthyear , 'ligneff' => $ligneff]);
+                return $this->render('visiteur/VueNouveauFrais.html.twig',['my' => $monthyear , 'ligneff' => $ligneff, 'ligneHFF' => $ligneHff,
+                    'LHFFexisite' => $LHFFexiste, 'form'=>$form->createView()]);
             }
         }
         return $this->redirect('LoginVisiteur');
@@ -190,6 +218,7 @@ class VisiteurController extends AbstractController
             
             $ligneff = $this->getDoctrine()->getRepository(LigneFraisForfait::class)->getLFFwithIDVisiteurAndMonth($idv,$mois);
             $ficheF = $this->getDoctrine()->getRepository(FicheFrais::class)->ficheforfaitwithMonthandIdv($mois,$idv);
+            $ligneHff = $this->getDoctrine()->getRepository(LigneFraisHorsForfait::class)->LHFFwithMonthandIdv($mois,$idv);
             $li = new FicheFrais();
             
             foreach($ligneff as $l){                
@@ -200,7 +229,11 @@ class VisiteurController extends AbstractController
                 $entityManager->merge($l);
                 $entityManager->flush();
 
-            } 
+            }
+            foreach($ligneHff as $h){
+                $montantValider = $montantValider + $h->getMontant();
+            }
+            
             $ficheF->setMontantValide($montantValider);
             $ficheF->setDateModif(new \DateTime());
             $entityManager->merge($ficheF);

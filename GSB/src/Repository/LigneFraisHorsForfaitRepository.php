@@ -47,4 +47,22 @@ class LigneFraisHorsForfaitRepository extends ServiceEntityRepository
         ;
     }
     */
+    
+    
+     public function LHFFwithMonthandIdv($mois , $idvisiteur)
+    {
+        $queryBuilder = $this->_em->createQueryBuilder()
+            ->select('l')
+            ->from(LigneFraisHorsForfait::class, 'l')
+            ->where('l.idVisiteur = :id')
+            ->andWhere('l.mois = :mois')
+            ->setParameter('id',$idvisiteur)
+            ->setParameter('mois',$mois);
+             
+        $result =  $queryBuilder->getQuery()->getResult();
+           
+        return $result;
+    }
 }
+    
+
