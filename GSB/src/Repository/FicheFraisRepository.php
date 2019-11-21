@@ -47,4 +47,20 @@ class FicheFraisRepository extends ServiceEntityRepository
         ;
     }
     */
+    
+    
+    public function ficheforfaitwithMonthandIdv($mois , $idvisiteur): FicheFrais
+    {
+        $queryBuilder = $this->_em->createQueryBuilder()
+            ->select('f')
+            ->from(FicheFrais::class, 'f')
+            ->where('f.idVisiteur = :id')
+            ->andWhere('f.mois = :mois')
+            ->setParameter('id',$idvisiteur)
+            ->setParameter('mois',$mois);
+             
+        $result =  $queryBuilder->getQuery()->getOneOrNullResult();
+           
+        return $result;
+    }
 }

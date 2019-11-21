@@ -5,42 +5,58 @@
 {% block body %}
     <style>
         input[type=text] {
-            border-radius:15%;
+            border-radius:25%;
             box-sizing: border-box;
             text-align: center;
-        
+        }
+        .periode {
+            border: 2px solid;
+            width:90%;
+            margin:auto;
+            margin-top: 2em;
+            border-radius: 25px;
+            background-color: lightblue;
+            margin-top: 1em;
+            
         }
         
-    </style>    
-    <div class="contenu" style="width:80%; margin:auto ; margin-top: 2em; border-radius: 25px; background-color: lightblue"> 
-        <div class="periode" style="margin-top: 2em">
-            <h4 style="margin-left:2em">Gestion des Frais </h4>
-            <center>
-                <h4>Période d'engagement:</h4>
-                <label>Mois : </label>
-                <input type="text" name="Mois" value={{ my[0]}} readonly>
-                
-                <label style="margin-left: 5em">Année : </label>
-                <input type="text" name="annee" value={{ my[1]}} readonly>
-            </center>
-        </div>
+        
+    </style>
+    <div>
+        <div class="contenu"> 
+            <div class="periode">
+                <h4 style="margin-left:2em">Gestion des Frais </h4>
+                <center>
+                    <h4>Période d'engagement:</h4>
+                    <label>Mois : </label>
+                    <input type="text" name="Mois" value={{ my[0]}} readonly>
+
+                    <label style="margin-left: 5em">Année : </label>
+                    <input type="text" name="annee" value={{ my[1]}} readonly>
+                </center>
+                <br/>
+            </div>
+        </div> 
             <style>
                 
-                fieldset{
+                .fff1{
                     border: 2px solid;
                     max-width:500px;
                     padding:16px;
-                    margin-bottom: 50em;
-                    margin-top:15em;
+                    margin-bottom: 1em;
+                    margin-top:1em;
                     background-color: lightcoral ;
-                    border-radius: 20px
+                    border-radius: 20px;
+                    margin-left: 5%;
+                    
+                     
                 }
                 
             </style>
             
         <br/>
-        <form>
-            <fieldset style="margin: auto">
+        <form action="{{ path('ModifierLigneForfait') }}" method="POST">
+            <fieldset class="fff1">
                 <legend stlye>Frais Forfait :</legend>
                 <center>
                 <div class="#" style="margin-top:2em">
@@ -54,7 +70,7 @@
                         {% elseif l.IdFraisForfait.Id == 4 %}
                             <label>Repas Restaurant : </label>  
                         {% endif %}
-                        <input style="float: right; margin-right:3em" type="number" name="Quantite" value={{ l.Quantite }} >
+                        <input style="float: right; margin-right:3em" type="number" name="{{ l.IdFraisForfait.Id }}" value={{ l.Quantite }} >
                         <p></p>
                     {% endfor %}
                     <input class=" btn btn-success " style="width:8em;margin-right: 15px " type="submit" value="Valider">
@@ -65,6 +81,32 @@
         </form>
         <br/>
         <br/>
+        
+        <form action="{{ path('ModifierLigneForfait') }}" method="POST">
+            <fieldset class="">
+                <legend stlye>Frais Forfait :</legend>
+                <center>
+                <div class="#" style="margin-top:2em">
+                    {% for l in ligneff %}
+                        {% if  l.IdFraisForfait.Id == 1 %}
+                            <label>Forfait Etape : </label>
+                        {% elseif l.IdFraisForfait.Id == 2 %}
+                            <label>Frais Kilométrique : </label>  
+                        {% elseif l.IdFraisForfait.Id == 3 %}
+                            <label>Nuitée Hôtel : </label>  
+                        {% elseif l.IdFraisForfait.Id == 4 %}
+                            <label>Repas Restaurant : </label>  
+                        {% endif %}
+                        <input style="float: right; margin-right:3em" type="number" name="{{ l.IdFraisForfait.Id }}" value={{ l.Quantite }} >
+                        <p></p>
+                    {% endfor %}
+                    <input class=" btn btn-success " style="width:8em;margin-right: 15px " type="submit" value="Valider">
+                    <input class=" btn btn-danger " style="width:8em;margin-left: 15px" type="reset" value="reset">
+                </div>
+                </center>
+            </fieldset>
+        </form>
     </div>
+                    
     
 {% endblock %}

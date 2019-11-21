@@ -15,7 +15,10 @@ use Psr\Log\LoggerInterface;
 use App\Entity\LigneFraisForfait;
 use App\Repository\LigneFraisForfaitRepository;
 use App\Entity\FraisForfait;
-
+use App\Entity\FicheFrais;
+use App\Repository\FicheFraisRepository;
+use App\Entity\Etat;
+use App\Repository\EtatRepository;
 
 
 class VisiteurController extends AbstractController
@@ -112,10 +115,10 @@ class VisiteurController extends AbstractController
                     $mois = date('F');
                 }
                 $monthyear= array($mois,date('Y'));
-                
+                $_SESSION['mois'] = $mois;
+
                 $ligneff = $this->getDoctrine()->getRepository(LigneFraisForfait::class)->getLFFwithIDVisiteurAndMonth($idv,$mois);
-              
-                 
+                
                 if(sizeof($ligneff) < 1 ){
                     $fraisForfait = $this->getDoctrine()->getRepository(FraisForfait::class)->findAll();
                     
@@ -133,8 +136,21 @@ class VisiteurController extends AbstractController
                         $entityManager->flush();
                         
                         $LFF = null;
-                    }
+                    }    
+                    $etat = $this->getDoctrine()->getRepository(Etat::class)->find(3);
+
+
+                    $FicheFrais = new FicheFrais();
+                    $FicheFrais->setDateModif(new \DateTime());
+                    $FicheFrais->setIdVisiteur($visiteur);
+                    $FicheFrais->setMois($mois);
+                    $FicheFrais->setMontantValide(0);
+                    $FicheFrais->setNbJustificatifs(0);
+                    $FicheFrais->setIdEtat($etat);
+                    $entityManager->persist($FicheFrais);
+                    $entityManager->flush();
                         
+                      
                 }
                 
                 $ligneff = $this->getDoctrine()->getRepository(LigneFraisForfait::class)->getLFFwithIDVisiteurAndMonth($idv,$mois);
@@ -161,9 +177,39 @@ class VisiteurController extends AbstractController
     }
     
     
-    
-    
-    
+     /**
+     * @Route("/ModifierLigneForfait", name="ModifierLigneForfait")
+     */
+    public function ModifierLigneForfait(Request $query)
+    {  
+        $montantValider = 0;
+        $entityManager = $this->getDoctrine()->getManager();
+        if($query->isMethod('POST')){
+            $mois = $_SESSION['mois'];
+            $idv = $_SESSION['visiteur']->getId();
+            
+            $ligneff = $this->getDoctrine()->getRepository(LigneFraisForfait::class)->getLFFwithIDVisiteurAndMonth($idv,$mois);
+            $ficheF = $this->getDoctrine()->getRepository(FicheFrais::class)->ficheforfaitwithMonthandIdv($mois,$idv);
+            $li = new FicheFrais();
+            
+            foreach($ligneff as $l){                
+                
+                $quantite = $query->request->get($l->getIdFraisForfait()->getId());
+                $montantValider = $montantValider + ($quantite * $l->getIdFraisForfait()->getMontant());
+                $l->setQuantite(intval($quantite));
+                $entityManager->merge($l);
+                $entityManager->flush();
+
+            } 
+            $ficheF->setMontantValide($montantValider);
+            $ficheF->setDateModif(new \DateTime());
+            $entityManager->merge($ficheF);
+            $entityManager->flush();
+           
+           
+       }
+        return $this->redirect('SaisirNouveauFrais');
+    }
     
     
     
