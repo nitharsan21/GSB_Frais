@@ -66,6 +66,20 @@
                    
                 }
                 
+                .fff3{
+                    border: 2px solid;
+                    max-width:500px;
+                    padding:16px;
+                    margin-bottom: 1em;
+                    margin-top:1em;
+                    background-color: lightpink ;
+                    border-radius: 20px;
+                    margin-left: 2.5%; 
+                    float: left;
+                    
+                }
+                
+                
                 
 
                   span.psw {
@@ -119,8 +133,72 @@
                       }
 
                 
+                .btn-two {
+                    color: #FFF;
+                    transition: all 0.5s;
+                    position: relative; 
+                }
+                .btn-two span {
+                    z-index: 2; 
+                    display: block;
+                    position: absolute;
+                    width: 100%;
+                    height: 100%;   
+                }
+                .btn-two::before {
+                    content: '';
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    z-index: 1;
+                    transition: all 0.5s;
+                    border: 1px solid rgba(255,255,255,0.2);
+                    background-color: rgba(255,255,255,0.1);
+                }
+                .btn-two::after {
+                    content: '';
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    z-index: 1;
+                    transition: all 0.5s;
+                    border: 1px solid rgba(255,255,255,0.2);
+                    background-color: rgba(255,255,255,0.1);
+                }
+                .btn-two:hover::before {
+                  transform: rotate(-45deg);
+                  background-color: red;
+                }
+                .btn-two:hover::after {
+                  transform: rotate(45deg);
+                  background-color: red;
+                }
                 
+                div[class*=box] {
+                    height: 33.33%;
+                    width: 80%; 
+                  display: flex;
+                  justify-content: center;
+                  align-items: center;
+                  margin: auto;
+                  
+                }
+
+                .box-2 { background-color: lightcoral; }
                 
+                .btn1 {
+                    border-radius: 15px;
+                    line-height: 25px;
+                    height: 25px;
+                    text-align: center;
+                    width: 150px;
+                    cursor: pointer;
+                }
+
                 
             </style>
             
@@ -156,7 +234,7 @@
                     
                     
         <div>
-        <form action="#" method="POST">
+        
            <fieldset class="fff2">
                 <legend stlye>Frais Hors Forfait :</legend>
         {% if LHFFexisite == true %}
@@ -176,9 +254,22 @@
                             {% for lHff in ligneHFF %}
                             
                                 <tr>
-                                    <td>{{ lHff.Id }}</td>
+                                    <td>{{ lHff.getDate|date('d-m-Y') }}</td>
                                     <td>{{ lHff.Libelle }}</td>
                                     <td>{{ lHff.Montant }}</td>
+                                    
+                                    
+                                    
+                                    
+                                    <td> 
+                                        <div class="box-2">
+                                            <div class="btn1 btn-two">
+                                                <a href="{{ path('SupperimerLHFF',{ 'idLHFF' : lHff.Id }) }}" style="color: black">
+                                                    <span>Supprimer</span>
+                                                </a>
+                                            </div>
+                                         </div>
+                                    </td>
                                 </tr>       
                             {% endfor %}
                            
@@ -196,8 +287,11 @@
            
                 <center>
                 <div class="#" style="margin-top:2em">
-                    <button onclick="document.getElementById('id01').style.display='block'" style="width:auto;">Login</button>
-                    {% endif %}
+                    <div>
+                    <button onclick="document.getElementById('id01').style.display='block'" class=" btn btn-warning" style="margin: auto" type="button">Ajouter Frais Hors Forfait</button>
+                </div>   
+       {% endif %}
+       </fieldset>
                     
                     
                     
@@ -281,13 +375,36 @@
                         </center>
                     </div>
                 </div>
-                </center>
+                
+                            
+        <div>
+            <form action="{{ path('SetNBJustificatifs') }}" method="POST">
+                <fieldset class="fff3">
+                    <legend stlye>Hors Classification :</legend>
+                    <center>
+                    <div class="#" style="margin-top:2em">
+                         <label>Nombre Justificatifs : </label>
+                         <input style="float: right;" type="number" name="nbJ" value="{{ FicheFrais.NbJustificatifs }}" >
+                        <p></p>
+                        <label>Montant Total(€) : </label>
+                         <input style="float: right; " type="number" name="nbJ" step="0.01" value="{{ FicheFrais.MontantValide }}" readonly>
+                         <p></p>
+                        <input class=" btn btn-success " style="width:8em;margin-right: 15px " type="submit" value="Valider">
+                        <input class=" btn btn-danger " style="width:8em;margin-left: 15px" type="reset" value="reset">
+                    </div>
+                    </center>
+                </fieldset>
+            </form>
+        </div>
+                            
+                          
+                
            
        
         
-         </form>
+         
         </div>
-    </div>
+    
                     
     
 {% endblock %}

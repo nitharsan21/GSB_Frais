@@ -184,17 +184,11 @@ class VisiteurController extends AbstractController
                 if(sizeof($ligneHff)>0){
                     $LHFFexiste = true;
                 }
+                
+                $ficheF = $this->getDoctrine()->getRepository(FicheFrais::class)->ficheforfaitwithMonthandIdv($mois,$idv);
 
-                    
-                
-               
-                
-                
-                
-                
-                
                 return $this->render('visiteur/VueNouveauFrais.html.twig',['my' => $monthyear , 'ligneff' => $ligneff, 'ligneHFF' => $ligneHff,
-                    'LHFFexisite' => $LHFFexiste, 'form'=>$form->createView()]);
+                    'LHFFexisite' => $LHFFexiste, 'form'=>$form->createView() , 'FicheFrais' => $ficheF]);
             }
         }
         return $this->redirect('LoginVisiteur');
@@ -243,6 +237,57 @@ class VisiteurController extends AbstractController
        }
         return $this->redirect('SaisirNouveauFrais');
     }
+    
+    
+     /**
+     * @Route("/Supperimer/{idLHFF}", name="SupperimerLHFF")
+     */
+    function SupperimerLHFF($idLHFF){
+        
+        $entityManager = $this->getDoctrine()->getManager();     
+        $ligneHff = $this->getDoctrine()->getRepository(LigneFraisHorsForfait::class)->findOneBy(['id' => $idLHFF]);
+        
+        if($ligneHff != null ){
+            
+            $ficheF = $this->getDoctrine()->getRepository(FicheFrais::class)->ficheforfaitwithMonthandIdv($ligneHff->getMois(),$ligneHff->getIdVisiteur()->getId());
+        
+            $ficheF->setMontantValide($ficheF->getMontantValide() - $ligneHff->getMontant());
+            $entityManager->merge($ficheF);
+            $entityManager->remove($ligneHff);
+            $entityManager->flush();
+        }
+              
+        return $this->redirect('/SaisirNouveauFrais');
+    
+
+    }
+    
+    
+     
+     /**
+     * @Route("/SetNBJustificatifs", name="SetNBJustificatifs")
+     */
+    function SetNBJustificatifs(Request $query){
+        $entityManager = $this->getDoctrine()->getManager(); 
+        if($query->isMethod('POST')){
+            $mois = $_SESSION['mois'];
+            $idv = $_SESSION['visiteur']->getId();
+            
+            $ficheF = $this->getDoctrine()->getRepository(FicheFrais::class)->ficheforfaitwithMonthandIdv($mois,$idv);
+            
+            $ficheF->setNbJustificatifs($query->request->get("nbJ"));
+            $ficheF->setDateModif(new \DateTime());
+            $entityManager->merge($ficheF);
+            $entityManager->flush();
+            
+            
+            
+        }
+        
+        return $this->redirect('/SaisirNouveauFrais');
+    }
+    
+    
     
     
     
