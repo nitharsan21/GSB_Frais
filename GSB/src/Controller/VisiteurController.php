@@ -93,6 +93,7 @@ class VisiteurController extends AbstractController
         if(isset($_SESSION['login'])){
             if($_SESSION['login'] == true){
                 $_SESSION['login'] = false;
+                $_SESSION = array();
                 return $this->redirect('LoginVisiteur');
             }
         }
