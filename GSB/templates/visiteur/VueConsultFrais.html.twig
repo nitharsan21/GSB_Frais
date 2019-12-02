@@ -63,11 +63,11 @@
                 padding:16px;
                 margin-bottom: 1em;
                 margin-top:1em;
-                background-color: lightsalmon ;
+                background-color: lightseagreen ;
                 border-radius: 20px;
                 margin-left: 2.5%;
                 float: left;
-                width: 40%;
+                width: 55%;
             }
             
             .ficheFrais{
@@ -156,7 +156,13 @@
             <div class="periode">
                 <h4 style="margin-left:2em">Consulter des Frais </h4>
                 <center>
-                    <h4>Période d'engagement:</h4>
+                      <h4>Période d'engagement:</h4>
+                      
+                    {% if mois|length == 0 %}
+                        <h4> <font color="red">-*- Aucune Période n'est Saisie !!! -*-</font></h4>
+                    
+                    {% else %}
+                    
                     <label>Mois : </label>
                     <form action="{{ path('ConsultFrais') }}" method="POST" >
                     <select name="mois" onchange="this.form.submit()">
@@ -176,6 +182,7 @@
                              {% endfor %}
                     </select>
                 </form>
+                {% endif %}
                 <br/>
             </div>
         </div>
@@ -361,25 +368,28 @@
                         <tbody>
                             
                             {% for lHff in ligneHFF %}
-                            
-                                <tr>
-                                    <td>{{ lHff.getDate|date('d-m-Y') }}</td>
-                                    <td>{{ lHff.Libelle }}</td>
-                                    <td>{{ lHff.Montant }}</td>
-                                    
-                                    
-                                    
-                                    
-                                    <td> 
-                                        <div class="box-2">
-                                            <div class="btn1 btn-two">
-                                                <a href="{{ path('SupperimerLHFFConsult',{ 'idLHFF' : lHff.Id }) }}" style="color: black">
-                                                    <span>Supprimer</span>
-                                                </a>
-                                            </div>
-                                         </div>
-                                    </td>
-                                </tr>       
+                                <form action="SetMontantFFHFDansConsulter" method="POST">
+                                    <tr>
+                                        <td>{{ lHff.getDate|date('d-m-Y') }}</td>
+                                        <td>{{ lHff.Libelle }}</td>
+                                        <td><input style="float: right; margin-right:3em" type="number" name="montantFFHF" value={{ lHff.Montant }} ></td>
+                                        <input type="hidden" name="idFFHF" value={{ lHff.Id }} >
+
+
+                                        <td> 
+                                            <div class="box-2">
+                                                <div class="btn1 btn-two">
+                                                    <a href="{{ path('SupperimerLHFFConsult',{ 'idLHFF' : lHff.Id }) }}" style="color: black">
+                                                        <span>Supprimer</span>
+                                                    </a>
+                                                </div>
+                                             </div>
+                                        </td>
+                                        <td>
+                                            <input class=" btn btn-warning " style="width:8em;margin-right: 15px " type="submit" value="Modifier">
+                                        </td>
+                                    </tr>
+                                </form>
                             {% endfor %}
                            
                         </tbody>
