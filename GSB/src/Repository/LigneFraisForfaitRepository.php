@@ -47,24 +47,7 @@ class LigneFraisForfaitRepository extends ServiceEntityRepository
         ;
     }
     */
-    /*
-    public function moisparVisiteur($idVisiteur)
-    {
-        $queryBuilder = $this->_em->createQueryBuilder()
-            ->select('mois')
-            ->from(LigneFraisForfait::class, 'l')
-            ->where('l.idVisiteur = :id')
-            ->groupBy('l.mois')
-            ->setParameter('id',$idVisiteur);
-            
 
-           $result =  $queryBuilder->getQuery();
-           
-           return $result;
-
-    }
-     * 
-     */
     
     public function getLFFwithIDVisiteurAndMonth($idVisiteur,$mois)
     {

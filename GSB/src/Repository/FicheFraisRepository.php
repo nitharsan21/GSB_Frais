@@ -63,4 +63,22 @@ class FicheFraisRepository extends ServiceEntityRepository
            
         return $result;
     }
+    
+    
+     public function moisparVisiteur($idVisiteur)
+    {
+        $queryBuilder = $this->_em->createQueryBuilder()
+            ->select('l')
+            ->from(FicheFrais::class, 'l')
+            ->where('l.idVisiteur = :id')
+            ->groupBy('l.mois')
+            ->setParameter('id',$idVisiteur);
+            
+
+           $result =  $queryBuilder->getQuery()->getResult();
+           
+           return $result;
+
+    }
+    
 }

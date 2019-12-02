@@ -1,6 +1,6 @@
 {% extends "visiteur/navbar.html.twig" %}
 {% block title %}
-    Saisir Nouveau Frais
+    Consulter Frais
 {% endblock %}
 {% block body %}
     <style>
@@ -17,122 +17,72 @@
             border-radius: 25px;
             background-color: lightblue;
             margin-top: 1em;
+            margin-bottom: 1em;
             
         }
         
         
-    </style>
-    <div>
-        <div class="contenu"> 
-            <div class="periode">
-                <h4 style="margin-left:2em">Gestion des Frais </h4>
-                <center>
-                    <h4>Période d'engagement:</h4>
-                    <label>Mois : </label>
-                    <input type="text" name="Mois" value={{ my[0]}} readonly>
-
-                    <label style="margin-left: 5em">Année : </label>
-                    <input type="text" name="annee" value={{ my[1]}} readonly>
-                </center>
-                <br/>
-            </div>
-        </div> 
-            <style>
-                
-                .fff1{
-                    border: 2px solid;
-                    max-width:500px;
-                    padding:16px;
-                    margin-bottom: 1em;
-                    margin-top:1em;
-                    background-color: lightcoral ;
-                    border-radius: 20px;
-                    margin-left: 5%; 
-                    float: left;
-                    
-                }
-                
-                .fff2{
-                    border: 2px solid;
-                    padding:16px;
-                    margin-bottom: 1em;
-                    margin-top:1em;
-                    background-color: lightsalmon ;
-                    border-radius: 20px;
-                    margin-left: 2.5%;
-                    float: left;
-                    width: 40%;
-                   
-                }
-                
-                .fff3{
-                    border: 2px solid;
-                    max-width:500px;
-                    padding:16px;
-                    margin-bottom: 1em;
-                    margin-top:1em;
-                    background-color: lightpink ;
-                    border-radius: 20px;
-                    margin-left: 2.5%; 
-                    float: left;
-                    
-                }
-                
-                
-                
-
-                  span.psw {
-                    float: right;
-                    padding-top: 16px;
-                  }
-
-                  /* The Modal (background) */
-                  .modal {
-                    
-                    z-index: 1; /* Sit on top */
-                    left: 0;
-                    top: 0;
-                    width: 100%; /* Full width */
-                    height: 100%; /* Full height */
-                    overflow: auto; /* Enable scroll if needed */
-                    background-color: rgb(0,0,0); /* Fallback color */
-                    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
-                    padding-top: 60px;
-                    margin : auto;
-                    
-                  }
-                  .wall{
-                     
-                      background-color: lightblue;
-                      margin:auto;
-                  }
-
-                
-                  
-                 
-                
-                table {
-                        font-family: arial, sans-serif;
-                        border-collapse: collapse;
-                        width: 100%;
-                        background-color: white;
+         table {
+            font-family: arial, sans-serif;
+            border-collapse: collapse;
+            width: 100%;
+            background-color: white;
                         
                         
-                      }
+            }
 
-                      td, th {
-                        border: 1px solid #dddddd;
-                        text-align: left;
-                        padding: 8px;
-                        text-align: center;
-                      }
+            td, th {
+              border: 1px solid #dddddd;
+              text-align: left;
+              padding: 8px;
+              text-align: center;
+            }
 
-                      tr:nth-child(even) {
-                        background-color: #dddddd;
-                      }
-
+            tr:nth-child(even) {
+              background-color: #dddddd;
+            }
+            
+            
+            
+            .fff1{
                 
-                .btn-two {
+                border: 2px solid;
+                max-width:500px;
+                padding:16px;
+                margin-bottom: 1em;
+                margin-top:1em;
+                background-color: lightcoral ;
+                border-radius: 20px;
+                margin-left: 10%; 
+                float: left;
+            }
+            
+            .fff2{
+
+                border: 2px solid;
+                padding:16px;
+                margin-bottom: 1em;
+                margin-top:1em;
+                background-color: lightsalmon ;
+                border-radius: 20px;
+                margin-left: 2.5%;
+                float: left;
+                width: 40%;
+            }
+            
+            .ficheFrais{
+                 border: 2px solid;
+                padding:16px;
+                margin-bottom: 1em;
+                margin-top:2em;
+                background-color: lightsalmon ;
+                border-radius: 20px;
+                margin:auto;
+                width: 80%;
+            }
+            
+            
+            .btn-two {
                     color: #FFF;
                     transition: all 0.5s;
                     position: relative; 
@@ -197,19 +147,179 @@
                     width: 150px;
                     cursor: pointer;
                 }
+        
+        
+    </style>
+    
+    <div>
+        <div class="contenu"> 
+            <div class="periode">
+                <h4 style="margin-left:2em">Consulter des Frais </h4>
+                <center>
+                    <h4>Période d'engagement:</h4>
+                    <label>Mois : </label>
+                    <form action="{{ path('ConsultFrais') }}" method="POST" >
+                    <select name="mois" onchange="this.form.submit()">
+                       
+                            <option value="" >--Selectionner une Mois--</option>
+                        
+                            {% for m in mois %} 
+                                {% if MoisChoise != null %}
+                                    {% if m.Mois == MoisChoise %}
+                                        <option value={{ m.Mois }} selected>{{ m.Mois }}</option>
+                                    {% else %}
+                                        <option value={{ m.Mois }}>{{ m.Mois }}</option>
+                                    {% endif %}
+                                 {% else %}
+                                <option value={{ m.Mois }}>{{ m.Mois }}</option>
+                                {% endif %}
+                             {% endfor %}
+                    </select>
+                </form>
+                <br/>
+            </div>
+        </div>
+        {% if MoisChoise != null %}
+            {% if FicheF.IdEtat.Id != 3 %}   
+            <div class="ficheFrais"> 
+                <h4 style="margin:auto">Fiche Frais :</h4>
+                <table>
+                    <thead>
 
+                    <th>Etat</th>
+                    <th>NB_Justificatifs</th>
+                    <th>Date_Modif</th>
+                    <th>Montant_Total</th>
+
+                    </thead>
+                    <tbody>
+                        <tr>
+
+                            <td{% if FicheF.IdEtat.Id == 1 %}
+                                class="bg-success"
+                               
+                            {% elseif FicheF.IdEtat.Id == 2 %}
+                                class="bg-danger"
+                            {% else %}
+                                class="bg-info"
+                            {% endif %}
+                                
+                                
+                                >{{ FicheF.IdEtat.Libelle }}</td>
+                            <td>{{ FicheF.NbJustificatifs }}</td>
+                            <td>{{ FicheF.DateModif|date('d-m-Y') }}</td>
+                            <td>{{ FicheF.MontantValide }} €</td>
+                        </tr>
+                    </tbody>
+
+
+                </table>
+
+            </div>
+
+            <div class="LigneFraisForfait"> 
+                <fieldset class="fff1">
+                    <legend stlye>Frais Forfait :</legend>
+                    <center>
+                    <div class="#" style="margin-top:2em">
+                        {% for l in ligneFF %}
+                            {% if  l.IdFraisForfait.Id == 1 %}
+                                <label>Forfait Etape : </label>
+                            {% elseif l.IdFraisForfait.Id == 2 %}
+                                <label>Frais Kilométrique : </label>  
+                            {% elseif l.IdFraisForfait.Id == 3 %}
+                                <label>Nuitée Hôtel : </label>  
+                            {% elseif l.IdFraisForfait.Id == 4 %}
+                                <label>Repas Restaurant : </label>  
+                            {% endif %}
+                            <input style="float: right; margin-right:3em" type="number" name="{{ l.IdFraisForfait.Id }}" value={{ l.Quantite }} readonly>
+                            <p></p>
+                        {% endfor %}
+
+                    </div>
+                    </center>
+                </fieldset>
+
+            </div>
+
+             <div>
+
+               <fieldset class="fff2">
+                    <legend>Frais Hors Forfait :</legend>
+
+
+                    <center>
+                    <div class="#" style="margin-top:2em;">
+                        <table>
+                            <thead>
+                            <th> Date </th>
+                            <th> Libelle </th>
+                            <th> Montant(€)</th>
+
+
+                            </thead>
+                            <tbody>
+
+                                {% for lHff in ligneHFF %}
+
+                                    <tr>
+                                        <td>{{ lHff.getDate|date('d-m-Y') }}</td>
+                                        <td>{{ lHff.Libelle }}</td>
+                                        <td>{{ lHff.Montant }}</td>
+
+                                    </tr>       
+                                {% endfor %}
+
+                            </tbody>
+                        </table>
+                    </div>           
+                    </center>    
+               </fieldset>            
+             </div>        
+            {% else %}
                 
-            </style>
-            
-        <br/>
-        {% if FicheFrais.IdEtat.Id == 3 %}
-        <div>
-        <form action="{{ path('ModifierLigneForfait') }}" method="POST">
+                <div class="ficheFrais"> 
+                <h4 style="margin:auto">Fiche Frais :</h4>
+                <form action="{{ path('SetNBJustificatifsDansConsulter') }}" method="POST">
+
+                <table>
+                    <thead>
+
+                    <th>Etat</th>
+                    <th>NB_Justificatifs</th>
+                    <th>Date_Modif</th>
+                    <th>Montant_Total</th>
+                    </thead>
+                    <tbody>
+                        
+                        <tr>
+
+                            <td class="bg-warning">{{ FicheF.IdEtat.Libelle }}</td>
+                            <td><input style="margin:auto;" type="number" name="nbJ" value="{{ FicheF.NbJustificatifs }}" ></td>
+                            <td>{{ FicheF.DateModif|date('d-m-Y') }}</td>
+                            <td>{{ FicheF.MontantValide }} €</td>
+                        </tr>
+                        </form>
+                    </tbody>
+
+
+                </table>
+                        <center >
+                            <div style="margin-top:0.5em">
+                        <input class=" btn btn-success " style="width:8em;margin-right: 15px;margin-left:auto " type="submit" value="Valider">
+                        <input class=" btn btn-danger " style="width:8em;margin-left: 15px;margin-right:auto" type="reset" value="reset">
+                            </div>
+                        </center>
+                 </form>           
+            </div>
+                        
+            <div>
+        <form action="{{ path('ModifierLigneForfaitConsulter') }}" method="POST">
             <fieldset class="fff1">
                 <legend stlye>Frais Forfait :</legend>
                 <center>
                 <div class="#" style="margin-top:2em">
-                    {% for l in ligneff %}
+                    {% for l in ligneFF %}
                         {% if  l.IdFraisForfait.Id == 1 %}
                             <label>Forfait Etape : </label>
                         {% elseif l.IdFraisForfait.Id == 2 %}
@@ -232,13 +342,12 @@
         </div>
                     
                     
-                    
+        
         <div>
         
            <fieldset class="fff2">
                 <legend stlye>Frais Hors Forfait :</legend>
-        {% if LHFFexisite == true %}
-        
+
                 <center>
                 <div class="#" style="margin-top:2em;">
                     <table>
@@ -264,7 +373,7 @@
                                     <td> 
                                         <div class="box-2">
                                             <div class="btn1 btn-two">
-                                                <a href="{{ path('SupperimerLHFF',{ 'idLHFF' : lHff.Id }) }}" style="color: black">
+                                                <a href="{{ path('SupperimerLHFFConsult',{ 'idLHFF' : lHff.Id }) }}" style="color: black">
                                                     <span>Supprimer</span>
                                                 </a>
                                             </div>
@@ -281,20 +390,7 @@
                     <button onclick="document.getElementById('id01').style.display='block'" class=" btn btn-warning" style="margin: auto" type="button">Ajouter Frais Hors Forfait</button>
                 </div>    
                 </center>
-           
-        {% else %}
-                
-           
-                <center>
-                <div class="#" style="margin-top:2em">
-                    <div>
-                    <button onclick="document.getElementById('id01').style.display='block'" class=" btn btn-warning" style="margin: auto" type="button">Ajouter Frais Hors Forfait</button>
-                </div>   
-       {% endif %}
        </fieldset>
-                    
-                    
-                    
                     <div id="id01" class="modal">
                         
                         <center>
@@ -342,7 +438,7 @@
                                         </div>
                                     </div>
                                     <br/>
-
+                                    <input name="monthid" type="hidden" value={{ MoisChoise }}>       
 
                                     {# Pour le bouton, pas de label ni d'erreur, on affiche juste le widget #}
                                     <div class="row">
@@ -374,154 +470,22 @@
                             </div>
                         </center>
                     </div>
-                </div>
+                    
+                    
+                    
+                </div>            
+                    
+                    
+                    
+                        
                 
-                            
-        <div>
-            <form action="{{ path('SetNBJustificatifs') }}" method="POST">
-                <fieldset class="fff3">
-                    <legend stlye>Hors Classification :</legend>
-                    <center>
-                    <div class="#" style="margin-top:2em">
-                         <label>Nombre Justificatifs : </label>
-                         <input style="float: right;" type="number" name="nbJ" value="{{ FicheFrais.NbJustificatifs }}" >
-                        <p></p>
-                        <label>Montant Total(€) : </label>
-                         <input style="float: right; " type="number" name="MontantT" step="0.01" value="{{ FicheFrais.MontantValide }}" readonly>
-                         <p></p>
-                        <input class=" btn btn-success " style="width:8em;margin-right: 15px " type="submit" value="Valider">
-                        <input class=" btn btn-danger " style="width:8em;margin-left: 15px" type="reset" value="reset">
-                    </div>
-                    </center>
-                </fieldset>
-            </form>
-        </div>
-        {% else %}
-        <style>
-            .bg-warning {
-              padding: 20px;
-              border-radius: 15px;
-              color: black;
-              width: 80%;
-              margin: auto;
-               
-            }
-
-            .closebtn {
-              margin-left: 15px;
-              color: black;
-              font-weight: bold;
-              float: right;
-              font-size: 22px;
-              line-height: 20px;
-              cursor: pointer;
-              transition: 0.3s;
-            }
-
-            .closebtn:hover {
-              color: red;
-            }
-
-        </style>
-        <div class="bg-warning">
-            <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span> 
-                <strong>WARNING!   </strong> Ficher Saisie clôturée. Modification IMPOSSIBLE!!!
-        </div>    
-            
-            
-            
-            
-         <div>
-            <fieldset class="fff1">
-                <legend stlye>Frais Forfait :</legend>
-                <center>
-                <div class="#" style="margin-top:2em">
-                    {% for l in ligneff %}
-                        {% if  l.IdFraisForfait.Id == 1 %}
-                            <label>Forfait Etape : </label>
-                        {% elseif l.IdFraisForfait.Id == 2 %}
-                            <label>Frais Kilométrique : </label>  
-                        {% elseif l.IdFraisForfait.Id == 3 %}
-                            <label>Nuitée Hôtel : </label>  
-                        {% elseif l.IdFraisForfait.Id == 4 %}
-                            <label>Repas Restaurant : </label>  
-                        {% endif %}
-                        <input style="float: right; margin-right:3em" type="number" name="{{ l.IdFraisForfait.Id }}" value={{ l.Quantite }} readonly>
-                        <p></p>
-                    {% endfor %}
-                    
-                </div>
-                </center>
-            </fieldset>
-        </form>
-        
-        </div> 
-                    
-                    
-         <div>
-        
-           <fieldset class="fff2">
-                <legend>Frais Hors Forfait :</legend>
-        
-        
-                <center>
-                <div class="#" style="margin-top:2em;">
-                    <table>
-                        <thead>
-                        <th> Date </th>
-                        <th> Libelle </th>
-                        <th> Montant(€)</th>
-                       
-                            
-                        </thead>
-                        <tbody>
-                            
-                            {% for lHff in ligneHFF %}
-                            
-                                <tr>
-                                    <td>{{ lHff.getDate|date('d-m-Y') }}</td>
-                                    <td>{{ lHff.Libelle }}</td>
-                                    <td>{{ lHff.Montant }}</td>
-                                    
-                                </tr>       
-                            {% endfor %}
-                           
-                        </tbody>
-                    </table>
-                </div>             
-                </center>
-           </fieldset>
-         </div>
-                            
-                            
-        <div>
-                <fieldset class="fff3">
-                    <legend stlye>Hors Classification :</legend>
-                    <center>
-                    <div class="#" style="margin-top:2em">
-                         <label>Nombre Justificatifs : </label>
-                         <input style="float: right;" type="number" name="nbJ" value="{{ FicheFrais.NbJustificatifs }}" readonly>
-                        <p></p>
-                        <label>Montant Total(€) : </label>
-                         <input style="float: right; " type="number" name="MontantT" step="0.01" value="{{ FicheFrais.MontantValide }}" readonly>
-                         <p></p>
-                    </div>
-                    </center>
-                </fieldset>
-            </form>
-        </div>                    
-                            
-            
-        {% endif %}
-                          
                 
-           
-       
-        
-         
-        </div>
-    
+            {% endif %}        
                     
+        {% endif %}              
+                    
+   
+    </div> 
     
 {% endblock %}
 

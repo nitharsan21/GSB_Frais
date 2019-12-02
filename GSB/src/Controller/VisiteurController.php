@@ -136,7 +136,7 @@ class VisiteurController extends AbstractController
                         // Exécution du INSERT INTO
                         $entityManager->flush();
                         
-                        $LFF = null;
+                        $LFF = null; 
                     }    
                     $etat = $this->getDoctrine()->getRepository(Etat::class)->find(3);
 
@@ -288,6 +288,212 @@ class VisiteurController extends AbstractController
     }
     
     
+    
+    /**
+     * @Route("/ConsultFrais", name="ConsultFrais")
+     */
+    function ConsultFrais(Request $query){
+        
+        
+       
+        if(isset($_SESSION['login']) and isset($_SESSION['visiteur'])){
+            if($_SESSION['login'] == true){
+                $idv = $_SESSION['visiteur']->getId();      
+                $mois = $this->getDoctrine()->getRepository(FicheFrais::class)->moisparVisiteur($idv);
+                $MoisChoise = null;
+                $visiteur = $this->getDoctrine()->getRepository(Visiteur::class)->find($idv);
+                
+                if($query->isMethod('POST')){
+                    
+                    $MoisChoise = $query->request->get("mois");
+                    $_SESSION['MoisChoise'] = $MoisChoise;
+                    
+                    
+                    if($MoisChoise != "" or $query->request->get("monthid") != ""){
+                        
+                        $ligneHorsForFait = new LigneFraisHorsForfait();
+                        $form = $this->createForm(LHFFType::class, $ligneHorsForFait);
+                        
+                        $form->handleRequest($query);
+                        if ($form->isSubmitted() && $form->isValid()) {
+                            $ligneHorsForFait->setMois($query->request->get("monthid"));
+                            $ligneHorsForFait->setIdVisiteur($visiteur);
+                            $entityManager = $this->getDoctrine()->getManager();
+                            $entityManager->persist($ligneHorsForFait);
+                            $entityManager->flush();
+
+                            $ficheF = $this->getDoctrine()->getRepository(FicheFrais::class)->ficheforfaitwithMonthandIdv($query->request->get("monthid"),$idv);
+                            $ficheF->setMontantValide($ficheF->getMontantValide() + $ligneHorsForFait->getMontant());
+                            $ficheF->setDateModif(new \DateTime());
+                            $entityManager->merge($ficheF);
+                            $entityManager->flush();
+                           
+                            $_SESSION['MoisChoise'] = $query->request->get("monthid");
+
+                            return $this->redirect('ConsultFrais');
+
+                            }
+                        
+                        $ligneff = $this->getDoctrine()->getRepository(LigneFraisForfait::class)->getLFFwithIDVisiteurAndMonth($idv,$MoisChoise);
+                        $ficheF = $this->getDoctrine()->getRepository(FicheFrais::class)->ficheforfaitwithMonthandIdv($MoisChoise,$idv);
+                        $ligneHff = $this->getDoctrine()->getRepository(LigneFraisHorsForfait::class)->LHFFwithMonthandIdv($MoisChoise,$idv);
+
+
+
+                        return $this->render('visiteur/VueConsultFrais.html.twig',['mois' =>$mois, "MoisChoise" => $MoisChoise , "ligneFF" => $ligneff , "ligneHFF" => $ligneHff , "FicheF" => $ficheF , "form" =>$form->createView() ,]);
+                    
+                    }
+                    else{
+                        return $this->render('visiteur/VueConsultFrais.html.twig',['mois' =>$mois,"MoisChoise" => $MoisChoise]);
+                    }
+        
+                        
+                    }
+                
+                /**if($query->isMethod('POST')){
+                    
+                    $ligneHorsForFait = new LigneFraisHorsForfait();
+                    $form = $this->createForm(LHFFType::class, $ligneHorsForFait);
+                    
+                    $form->handleRequest($query);
+                    if ($form->isSubmitted() && $form->isValid()) {
+                        $ligneHorsForFait->setMois($_SESSION['MoisChoise']);
+                        $ligneHorsForFait->setIdVisiteur($visiteur);
+                        $entityManager = $this->getDoctrine()->getManager();
+                        $entityManager->persist($ligneHorsForFait);
+                        $entityManager->flush();
+
+                        $ficheF = $this->getDoctrine()->getRepository(FicheFrais::class)->ficheforfaitwithMonthandIdv($_SESSION['MoisChoise'],$idv);
+                        $ficheF->setMontantValide($ficheF->getMontantValide() + $ligneHorsForFait->getMontant());
+                        $ficheF->setDateModif(new \DateTime());
+                        $entityManager->merge($ficheF);
+                        $entityManager->flush();
+
+
+                        return $this->redirect('ConsultFrais');       
+
+                    }
+                }*/
+                    
+                if($_SESSION['MoisChoise'] != null){
+                    
+                    $MoisChoise = $_SESSION['MoisChoise'];
+                    
+                    if($MoisChoise != "null"){
+                        $ligneff = $this->getDoctrine()->getRepository(LigneFraisForfait::class)->getLFFwithIDVisiteurAndMonth($idv,$MoisChoise);
+                        $ficheF = $this->getDoctrine()->getRepository(FicheFrais::class)->ficheforfaitwithMonthandIdv($MoisChoise,$idv);
+                        $ligneHff = $this->getDoctrine()->getRepository(LigneFraisHorsForfait::class)->LHFFwithMonthandIdv($MoisChoise,$idv);
+
+                        $ligneHorsForFait = new LigneFraisHorsForfait();
+                        $form = $this->createForm(LHFFType::class, $ligneHorsForFait);   
+
+                        return $this->render('visiteur/VueConsultFrais.html.twig',['mois' =>$mois, "MoisChoise" => $MoisChoise , "ligneFF" => $ligneff , "ligneHFF" => $ligneHff , "FicheF" => $ficheF , "form" =>$form->createView() ,]);
+                    }
+                    $MoisChoise = null;
+                    $_SESSION['MoisChoise'] = null;
+                    return $this->render('visiteur/VueConsultFrais.html.twig',['mois' =>$mois,"MoisChoise" => $MoisChoise]);
+                    
+                }
+            
+                
+                
+            
+                return $this->render('visiteur/VueConsultFrais.html.twig',['mois' =>$mois,"MoisChoise" => $MoisChoise]);
+            }
+            
+        }
+         return $this->redirect('LoginVisiteur');
+    }
+    
+    
+     
+     /**
+     * @Route("/SetNBJustificatifsDansConsulter", name="SetNBJustificatifsDansConsulter")
+     */
+    function SetNBJustificatifsDansConsulter(Request $query){
+        $entityManager = $this->getDoctrine()->getManager(); 
+        if($query->isMethod('POST')){
+            $mois = $_SESSION['MoisChoise'];
+            $idv = $_SESSION['visiteur']->getId();
+            $query->attributes->set('mois', $mois);
+            
+            $ficheF = $this->getDoctrine()->getRepository(FicheFrais::class)->ficheforfaitwithMonthandIdv($mois,$idv);
+            
+            $ficheF->setNbJustificatifs($query->request->get("nbJ"));
+            $ficheF->setDateModif(new \DateTime());
+            $entityManager->merge($ficheF);
+            $entityManager->flush();
+            
+            
+            
+        }
+        
+        return $this->redirect('ConsultFrais');
+    }
+    
+    
+    /**
+     * @Route("/ModifierLigneForfaitConsulter", name="ModifierLigneForfaitConsulter")
+     */
+    public function ModifierLigneForfaitConsulter(Request $query)
+    {  
+        $montantValider = 0;
+        $entityManager = $this->getDoctrine()->getManager();
+        if($query->isMethod('POST')){
+            $mois = $_SESSION['MoisChoise'];
+            $idv = $_SESSION['visiteur']->getId();
+            
+            $ligneff = $this->getDoctrine()->getRepository(LigneFraisForfait::class)->getLFFwithIDVisiteurAndMonth($idv,$mois);
+            $ficheF = $this->getDoctrine()->getRepository(FicheFrais::class)->ficheforfaitwithMonthandIdv($mois,$idv);
+            $ligneHff = $this->getDoctrine()->getRepository(LigneFraisHorsForfait::class)->LHFFwithMonthandIdv($mois,$idv);
+            $li = new FicheFrais();
+            
+            foreach($ligneff as $l){                
+                
+                $quantite = $query->request->get($l->getIdFraisForfait()->getId());
+                $montantValider = $montantValider + ($quantite * $l->getIdFraisForfait()->getMontant());
+                $l->setQuantite(intval($quantite));
+                $entityManager->merge($l);
+                $entityManager->flush();
+
+            }
+            foreach($ligneHff as $h){
+                $montantValider = $montantValider + $h->getMontant();
+            }
+            
+            $ficheF->setMontantValide($montantValider);
+            $ficheF->setDateModif(new \DateTime());
+            $entityManager->merge($ficheF);
+            $entityManager->flush();
+           
+           
+       }
+        return $this->redirect('ConsultFrais');
+    }
+    
+    
+    /**
+    * @Route("/SupperimerC/{idLHFF}", name="SupperimerLHFFConsult")
+    */
+    function SupperimerLHFFConsult($idLHFF){
+        
+        $entityManager = $this->getDoctrine()->getManager();     
+        $ligneHff = $this->getDoctrine()->getRepository(LigneFraisHorsForfait::class)->findOneBy(['id' => $idLHFF]);
+        
+        if($ligneHff != null ){
+            
+            $ficheF = $this->getDoctrine()->getRepository(FicheFrais::class)->ficheforfaitwithMonthandIdv($ligneHff->getMois(),$ligneHff->getIdVisiteur()->getId());
+        
+            $ficheF->setMontantValide($ficheF->getMontantValide() - $ligneHff->getMontant());
+            $entityManager->merge($ficheF);
+            $entityManager->remove($ligneHff);
+            $entityManager->flush();
+        }
+              
+        return $this->redirect('/ConsultFrais');
+    
+
+    }
     
     
     
