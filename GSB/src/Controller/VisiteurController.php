@@ -60,6 +60,7 @@ class VisiteurController extends AbstractController
                     $session->set('user_prenom',$lesVisiteurs->getPrenom());
                     $session->set('user_id',$lesVisiteurs->getId());
                     $session->set('login',"Salut");
+                    $_SESSION = array();
                     $_SESSION['login'] = true;
                     $_SESSION['visiteur'] = $lesVisiteurs;
                   
@@ -374,25 +375,29 @@ class VisiteurController extends AbstractController
 
                     }
                 }*/
-                    
-                if($_SESSION['MoisChoise'] != null){
-                    
-                    $MoisChoise = $_SESSION['MoisChoise'];
-                    
-                    if($MoisChoise != "null"){
-                        $ligneff = $this->getDoctrine()->getRepository(LigneFraisForfait::class)->getLFFwithIDVisiteurAndMonth($idv,$MoisChoise);
-                        $ficheF = $this->getDoctrine()->getRepository(FicheFrais::class)->ficheforfaitwithMonthandIdv($MoisChoise,$idv);
-                        $ligneHff = $this->getDoctrine()->getRepository(LigneFraisHorsForfait::class)->LHFFwithMonthandIdv($MoisChoise,$idv);
+                
+                if(isset($_SESSION['MoisChoise'])){
+                    if($_SESSION['MoisChoise'] != null){
 
-                        $ligneHorsForFait = new LigneFraisHorsForfait();
-                        $form = $this->createForm(LHFFType::class, $ligneHorsForFait);   
+                        $MoisChoise = $_SESSION['MoisChoise'];
 
-                        return $this->render('visiteur/VueConsultFrais.html.twig',['mois' =>$mois, "MoisChoise" => $MoisChoise , "ligneFF" => $ligneff , "ligneHFF" => $ligneHff , "FicheF" => $ficheF , "form" =>$form->createView() ,]);
+                        if($MoisChoise != ""){
+
+                            $ligneff = $this->getDoctrine()->getRepository(LigneFraisForfait::class)->getLFFwithIDVisiteurAndMonth($idv,$MoisChoise);
+                            $ficheF = $this->getDoctrine()->getRepository(FicheFrais::class)->ficheforfaitwithMonthandIdv($MoisChoise,$idv);
+                            $ligneHff = $this->getDoctrine()->getRepository(LigneFraisHorsForfait::class)->LHFFwithMonthandIdv($MoisChoise,$idv);
+
+                            $ligneHorsForFait = new LigneFraisHorsForfait();
+                            $form = $this->createForm(LHFFType::class, $ligneHorsForFait);   
+
+                            return $this->render('visiteur/VueConsultFrais.html.twig',['mois' =>$mois, "MoisChoise" => $MoisChoise , "ligneFF" => $ligneff , "ligneHFF" => $ligneHff , "FicheF" => $ficheF , "form" =>$form->createView() ,]);
+                        }
+                        $MoisChoise = null;
+                        $_SESSION['MoisChoise'] = null;
+                        return $this->render('visiteur/VueConsultFrais.html.twig',['mois' =>$mois,"MoisChoise" => $MoisChoise]);
+
                     }
-                    $MoisChoise = null;
-                    $_SESSION['MoisChoise'] = null;
-                    return $this->render('visiteur/VueConsultFrais.html.twig',['mois' =>$mois,"MoisChoise" => $MoisChoise]);
-                    
+                
                 }
             
                 
