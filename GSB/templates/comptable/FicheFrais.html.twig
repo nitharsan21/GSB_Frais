@@ -9,6 +9,7 @@
         <div class="searchName" style="margin-top: 2em">
             <center>
             <form action="{{ path('VueValiderFrais') }}" method="post" >
+                <label>Visiteur :</label>
                 <select name="Visiteur" onchange="this.form.submit()">
                     <option value="null">--Selectionner un Visiteur--</option>
                     {% for v in visiteurs %} 
@@ -23,21 +24,155 @@
                         {% endif %}
                     {% endfor %}
                 </select>
+            </form>
+            {% if l == true %}
+                
+                {% if ff|length > 0 %}
+                
+                <form action="{{ path('VueValiderFrais') }}" method="post" >
+                    <input type="hidden" name="visiteurchoise" value="{{ idvisiteurChoise }}">
+                    
+                    <label>Mois :</label>
+                    <select name="mois" onchange="this.form.submit()">
+                        <option value="null">--Selectionner un mois--</option>
+                        {% for p in ff %}
+                            {% if moisChoise != null %}
+                                {% if p.mois == moisChoise %}
+                                    <option value={{ p.mois }} selected>{{ p.mois }}</option>
+                                {% else %}
+                                    <option value={{ p.mois }}>{{ p.mois}}</option>
+                                {% endif %}
+                            {% else %}
+                            <option value={{ p.mois }}>{{ p.mois }}</option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
                 </form>
-                {% if l == true %}
-                    {% if mois != null %}
-                        {{ mois }}
-                    {% endif %}  
-                
-
-                    {% for p in lff %}
-                        <h4> {{ p.id }}</h4>
-
-                    {% endfor %}
-                
+                {% else %}
+                    <br>
+                    <h4> Pas de fiche de frais pour ce visiteur</h4>
                 {% endif %}
+            {% endif %}
+  
+            {% if moisChoise != null %}
+                <div class="ficheFrais"> 
+                <h4 style="margin:auto">Fiche Frais :</h4>
+                <form action="{{ path('SetNBJustificatifsDansConsulter') }}" method="POST">
 
-           
+                <table>
+                    <thead>
+
+                    <th>Etat</th>
+                    <th>NB_Justificatifs</th>
+                    <th>Date_Modif</th>
+                    <th>Montant_Total</th>
+                    </thead>
+                    <tbody>
+                        
+                        <tr>
+
+                            <td class="bg-warning">{{ FicheF.IdEtat.Libelle }}</td>
+                            <td><input style="margin:auto;" type="number" name="nbJ" value="{{ FicheF.NbJustificatifs }}" ></td>
+                            <td>{{ FicheF.DateModif|date('d-m-Y') }}</td>
+                            <td>{{ FicheF.MontantValide }} €</td>
+                        </tr>
+                        </form>
+                    </tbody>
+
+
+                </table>
+                        <center >
+                            <div style="margin-top:0.5em">
+                        <input class=" btn btn-success " style="width:8em;margin-right: 15px;margin-left:auto " type="submit" value="Valider">
+                        <input class=" btn btn-danger " style="width:8em;margin-left: 15px;margin-right:auto" type="reset" value="Reinitialiser">
+                            </div>
+                        </center>
+                 </form>           
+            </div>
+                        
+            <div>
+        <form action="{{ path('ModifierLigneForfaitConsulter') }}" method="POST">
+            <fieldset class="fff1">
+                <legend stlye>Frais Forfait :</legend>
+                <center>
+                <div class="#" style="margin-top:2em">
+                    {% for l in ligneFF %}
+                        {% if  l.IdFraisForfait.Id == 1 %}
+                            <label>Forfait Etape : </label>
+                        {% elseif l.IdFraisForfait.Id == 2 %}
+                            <label>Frais Kilométrique : </label>  
+                        {% elseif l.IdFraisForfait.Id == 3 %}
+                            <label>Nuitée Hôtel : </label>  
+                        {% elseif l.IdFraisForfait.Id == 4 %}
+                            <label>Repas Restaurant : </label>  
+                        {% endif %}
+                        <input style="float: right; margin-right:3em" type="number" name="{{ l.IdFraisForfait.Id }}" value={{ l.Quantite }} >
+                        <p></p>
+                    {% endfor %}
+                    <input class=" btn btn-success " style="width:8em;margin-right: 15px " type="submit" value="Valider">
+                    <input class=" btn btn-danger " style="width:8em;margin-left: 15px" type="reset" value="Reinitialiser">
+                </div>
+                </center>
+            </fieldset>
+        </form>
+        
+        </div>
+                    
+                    
+        
+        <div>
+        
+           <fieldset class="fff2">
+                <legend stlye>Frais Hors Forfait :</legend>
+
+                <center>
+                <div class="#" style="margin-top:2em;">
+                    <table>
+                        <thead>
+                        <th> Date </th>
+                        <th> Libelle </th>
+                        <th> Montant(€)</th>
+                        <th></th>
+                            
+                        </thead>
+                        <tbody>
+                            
+                            {% for lHff in ligneHFF %}
+                                <form action="SetMontantFFHFDansConsulter" method="POST">
+                                    <tr>
+                                        <td>{{ lHff.getDate|date('d-m-Y') }}</td>
+                                        <td>{{ lHff.Libelle }}</td>
+                                        <td><input style="float: right; margin-right:3em" type="number" name="montantFFHF" value={{ lHff.Montant }} ></td>
+                                        <input type="hidden" name="idFFHF" value={{ lHff.Id }} >
+
+
+                                        <td> 
+                                            <div class="box-2">
+                                                <div class="btn1 btn-two">
+                                                    <a href="{{ path('SupperimerLHFFConsult',{ 'idLHFF' : lHff.Id }) }}" style="color: black">
+                                                        <span>Supprimer</span>
+                                                    </a>
+                                                </div>
+                                             </div>
+                                        </td>
+                                        <td>
+                                            <input class=" btn btn-warning " style="width:8em;margin-right: 15px " type="submit" value="Modifier">
+                                        </td>
+                                    </tr>
+                                </form>
+                            {% endfor %}
+                           
+                        </tbody>
+                    </table>
+                </div>
+                            <br/>
+                <div>
+                    <button onclick="document.getElementById('id01').style.display='block'" class=" btn btn-warning" style="margin: auto" type="button">Ajouter Frais Hors Forfait</button>
+                </div>    
+                </center>
+            </fieldset>
+        </div>
+            {% endif %}
             </center>
         </div>
         <br/>

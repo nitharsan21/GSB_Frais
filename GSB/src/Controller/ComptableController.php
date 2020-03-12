@@ -14,6 +14,9 @@ use App\Repository\ComptableRepository;
 use App\Form\LoginComptableType;
 use Symfony\Component\HttpFoundation\Session\Session;
 use App\Repository\LigneFraisForfaitRepository;
+use App\Repository\FicheFraisRepository;
+use App\Entity\FicheFrais;
+use App\Entity\LigneFraisHorsForfait;
 
 
 class ComptableController extends AbstractController
@@ -104,31 +107,46 @@ class ComptableController extends AbstractController
                 $lesVisiteur = $this->getDoctrine()->getRepository(Visiteur::class)->findall();
                 if($query->isMethod('POST')){
                     if($query->request->get('Visiteur') != null){
-                        $mois = null;
-                        if(date('j') > 15 ){
-                            $mois = date("F", strtotime("+1 month", strtotime(date("F") . "1")) ); 
-                        }
-                        else{
-                            $mois = date('F');
-                        }
                         
                         $idv = $query->request->get('Visiteur');
                         
-                        $ligneff = $this->getDoctrine()->getRepository(LigneFraisForfait::class)->getLFFwithIDVisiteurAndMonth($idv,$mois);
+                        $ff = $this->getDoctrine()->getRepository(FicheFrais::class)->moisparVisiteur($idv);
                         
                          /*   $lignehff = $this->getDoctrine()->getRepository(\App\Repository\LigneFraisHorsForfaitRepository::class)->();
                          *
                          */
-                        return $this->render('comptable/FicheFrais.html.twig' , [ 'visiteurs' => $lesVisiteur,'mois' => $mois ,'idvisiteurChoise' => $idv,'l' => true,'lff' => $ligneff]);
+                        return $this->render('comptable/FicheFrais.html.twig' , [ 'visiteurs' => $lesVisiteur,'idvisiteurChoise' => $idv,'l' => true,'ff' => $ff,'moisChoise' => null]);
                     }
-                        return $this->render('comptable/FicheFrais.html.twig' , [ 'visiteurs' => $lesVisiteur,'mois' => $mois ,'l' => true , 'idvisiteurChoise' => $idv]);
+                    if($query->request->get('mois') != null && $query->request->get('mois') != "null"){
+                       
+                        $mois = $query->request->get('mois');
+                        $idv = $query->request->get('visiteurchoise');
+                        
+                        if($mois != ""){
+
+                            $ligneff = $this->getDoctrine()->getRepository(LigneFraisForfait::class)->getLFFwithIDVisiteurAndMonth($idv,$mois);
+                            $ficheF = $this->getDoctrine()->getRepository(FicheFrais::class)->ficheforfaitwithMonthandIdv($mois,$idv);
+                            $ligneHff = $this->getDoctrine()->getRepository(LigneFraisHorsForfait::class)->LHFFwithMonthandIdv($mois,$idv);
+                            $ff = $this->getDoctrine()->getRepository(FicheFrais::class)->moisparVisiteur($idv);
+                            
+                            
+                            return $this->render('comptable/FicheFrais.html.twig' , [ 'visiteurs' => $lesVisiteur,'idvisiteurChoise' => $idv,'l' => true,'ff' => $ff,'moisChoise' => $mois, "ligneFF" => $ligneff , "ligneHFF" => $ligneHff , "FicheF" => $ficheF ]);
+                            
+                        }
+                        
+                    }
+                    
+                    
+                        return $this->render('comptable/FicheFrais.html.twig' , [ 'visiteurs' => $lesVisiteur,'idvisiteurChoise' => $idv,'moisChoise' => null,'l' => false]);
                 }
 
 
 
-                return $this->render('comptable/FicheFrais.html.twig' , [ 'visiteurs' => $lesVisiteur, 'l' => false,'idvisiteurChoise' => $idv,]);
+                return $this->render('comptable/FicheFrais.html.twig' , [ 'visiteurs' => $lesVisiteur, 'l' => false,'idvisiteurChoise' => $idv,'moisChoise' => null]);
             }
         }
+      
+        
         return $this->redirect('LoginComptable');
         
         

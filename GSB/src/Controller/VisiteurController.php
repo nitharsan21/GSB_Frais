@@ -54,13 +54,13 @@ class VisiteurController extends AbstractController
             
 
             if($lesVisiteurs != null){
-                    
+                    $_SESSION = array();
                     $session = new Session();
                     $session->set('user_nom',$lesVisiteurs->getNom());
                     $session->set('user_prenom',$lesVisiteurs->getPrenom());
                     $session->set('user_id',$lesVisiteurs->getId());
                     $session->set('login',"Salut");
-                    $_SESSION = array();
+                    
                     $_SESSION['login'] = true;
                     $_SESSION['visiteur'] = $lesVisiteurs;
                   

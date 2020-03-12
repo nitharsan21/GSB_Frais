@@ -223,7 +223,7 @@
                         <p></p>
                     {% endfor %}
                     <input class=" btn btn-success " style="width:8em;margin-right: 15px " type="submit" value="Valider">
-                    <input class=" btn btn-danger " style="width:8em;margin-left: 15px" type="reset" value="reset">
+                    <input class=" btn btn-danger " style="width:8em;margin-left: 15px" type="reset" value="Reinitialiser">
                 </div>
                 </center>
             </fieldset>
@@ -256,19 +256,16 @@
                                 <tr>
                                     <td>{{ lHff.getDate|date('d-m-Y') }}</td>
                                     <td>{{ lHff.Libelle }}</td>
-                                    <td>{{ lHff.Montant }}</td>
-                                    
-                                    
-                                    
-                                    
+                                    <td>{{ lHff.Montant }}</td>                                   
+                                                                       
                                     <td> 
-                                        <div class="box-2">
-                                            <div class="btn1 btn-two">
-                                                <a href="{{ path('SupperimerLHFF',{ 'idLHFF' : lHff.Id }) }}" style="color: black">
-                                                    <span>Supprimer</span>
-                                                </a>
-                                            </div>
-                                         </div>
+                                        
+                                        <a href="{{ path('SupperimerLHFF',{ 'idLHFF' : lHff.Id }) }}" style="color: black">
+                                            <button type="button" class="btn btn-outline-dark" data-toggle="tooltip" data-placement="left" title="Supprimer frais" id="supprimerlHff{{lHff.Id}}">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </a>                                         
+                                                                                            
                                     </td>
                                 </tr>       
                             {% endfor %}
@@ -282,8 +279,7 @@
                 </div>    
                 </center>
            
-        {% else %}
-                
+        {% else %}                
            
                 <center>
                 <div class="#" style="margin-top:2em">
@@ -291,9 +287,7 @@
                     <button onclick="document.getElementById('id01').style.display='block'" class=" btn btn-warning" style="margin: auto" type="button">Ajouter Frais Hors Forfait</button>
                 </div>   
        {% endif %}
-       </fieldset>
-                    
-                    
+       </fieldset>                    
                     
                     <div id="id01" class="modal">
                         
@@ -390,7 +384,7 @@
                          <input style="float: right; " type="number" name="MontantT" step="0.01" value="{{ FicheFrais.MontantValide }}" readonly>
                          <p></p>
                         <input class=" btn btn-success " style="width:8em;margin-right: 15px " type="submit" value="Valider">
-                        <input class=" btn btn-danger " style="width:8em;margin-left: 15px" type="reset" value="reset">
+                        <input class=" btn btn-danger " style="width:8em;margin-left: 15px" type="reset" value="Reinitialiser">
                     </div>
                     </center>
                 </fieldset>
@@ -428,9 +422,6 @@
                 <strong>WARNING!   </strong> Ficher Saisie clôturée. Modification IMPOSSIBLE!!!
         </div>    
             
-            
-            
-            
          <div>
             <fieldset class="fff1">
                 <legend stlye>Frais Forfait :</legend>
@@ -455,8 +446,7 @@
             </fieldset>
         </form>
         
-        </div> 
-                    
+        </div>       
                     
          <div>
         
@@ -491,8 +481,7 @@
                 </div>             
                 </center>
            </fieldset>
-         </div>
-                            
+         </div>             
                             
         <div>
                 <fieldset class="fff3">
@@ -513,11 +502,6 @@
                             
             
         {% endif %}
-                          
-                
-           
-       
-        
          
         </div>
     
